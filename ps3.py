@@ -6,7 +6,7 @@
 # Name          : Yuteng
 # Collaborators : <your collaborators>
 # Time spent    : Started Problem 1 from 12:14 PM. Finished at 13:02 PM
-#               : Started Problem 2 from 13:05 PM. Finished at
+#               : Started Problem 2 from 13:05 PM. Finished at 14:08 PM
 
 import math
 import random
@@ -188,8 +188,14 @@ def update_hand(hand, word):
     returns: dictionary (string -> int)
     """
 
-    pass  # TO DO... Remove this line when you implement this function
+    local_hand = hand.copy()
+    word = word.lower()
 
+    for char in word:
+        if char in local_hand:
+            local_hand[char] = local_hand.get(char,0) - 1
+
+    return local_hand
 #
 # Problem #3: Test word validity
 #
