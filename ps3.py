@@ -7,6 +7,8 @@
 # Collaborators : <your collaborators>
 # Time spent    : Started Problem 1 from 12:14 PM. Finished at 13:02 PM
 #               : Started Problem 2 from 13:05 PM. Finished at 14:08 PM
+#               : Started Problem 3 from 14:08 PM. Finished at 14:35 PM
+#               : Started Problem 4 from
 
 import math
 import random
@@ -210,8 +212,23 @@ def is_valid_word(word, hand, word_list):
     word_list: list of lowercase strings
     returns: boolean
     """
+    word = word.lower()
+    local_hand = hand.copy()
 
-    pass  # TO DO... Remove this line when you implement this function
+    if word in word_list:
+        for char in word:
+            if char in local_hand:
+                if local_hand[char] == 0:
+                    return False
+                local_hand[char] = local_hand.get(char) - 1
+                continue
+            else:
+                return False
+        return True
+    else:
+        return False
+
+
 
 #
 # Problem #5: Playing a hand
