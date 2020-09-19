@@ -132,7 +132,7 @@ def display_hand(hand):
 
     hand: dictionary (string -> int)
     """
-    
+    print('Current hand: ', end = '')
     for letter in hand.keys():
         for j in range(hand[letter]):
              print(letter, end=' ')      # print all on the same line
@@ -172,6 +172,8 @@ def deal_hand(n):
     
     return hand
 
+
+
 #
 # Problem #2: Update a hand by removing letters
 #
@@ -200,6 +202,7 @@ def update_hand(hand, word):
     for char in word:
         if char in local_hand:
             local_hand[char] = local_hand.get(char,0) - 1
+
 
     return local_hand
 #
@@ -262,8 +265,9 @@ def calculate_handlen(hand):
     returns: integer
     """
     num_of_letters = 0
-    for index in range(len(hand)):
-        num_of_letters += 1
+    for char in hand:
+        if hand.get(char) != 0:
+            num_of_letters += 1
 
     return num_of_letters
 
@@ -300,7 +304,10 @@ def play_hand(hand, word_list):
 
     total_score = 0
 
-    while(bool(hand)):
+
+    emptyHand = False
+    while(not emptyHand):
+
         display_hand(hand)
         user_input = input('Enter word, or \"!!\" to indicate that you are finished: ')
 
@@ -308,14 +315,21 @@ def play_hand(hand, word_list):
             break
         else:
             if is_valid_word(user_input, hand, word_list):
-                hand = update_hand(hand, user_input)
                 score = get_word_score(user_input,calculate_handlen(hand))
+                hand = update_hand(hand, user_input)
+                emptyHand = all(value == 0 for value in hand.values())
                 total_score += score
                 print('\"',user_input, '\"', 'earned', score ,'.', 'Total: ', total_score ,'points.')
             else:
                 print('That is not a valid word. Please choose another word.')
 
-    print('Total score: ', total_score , 'points.')
+    if user_input == '!!':
+        print('Total score for this hand:',total_score)
+        return total_score
+
+    print('Ran out of letters\n\
+Total score for this hand: ', total_score , 'points.\n\
+--------------------')
 
     return total_score
 
@@ -351,7 +365,18 @@ def substitute_hand(hand, letter):
     returns: dictionary (string -> int)
     """
     
-    pass  # TO DO... Remove this line when you implement this function
+    local_hand = hand.copy()
+
+    if letter not in hand:
+        return hand
+    else:
+        key_value = local_hand.get(letter)
+        del(local_hand[letter])
+
+        x = random.choice(VOWELS)
+        local_hand[x] = key_value
+    return local_hand
+
        
     
 def play_game(word_list):
@@ -385,7 +410,39 @@ def play_game(word_list):
     word_list: list of lowercase strings
     """
     
-    print("play_game not implemented.") # TO DO... Remove this line when you implement this function
+    user_input = input('Enter total number of hands: ')
+    num_of_hands = int(user_input)
+    total_score = 0
+    score = 0
+    while num_of_hands != 0:
+        num_of_hands -= 1
+        hand = deal_hand(HAND_SIZE)
+        display_hand(hand)
+        user_input = input('Would you like to substitute a letter? ')
+
+        if user_input[0] == 'n' or user_input[0] == 'N':
+            play_hand(hand, word_list)
+
+        else:
+            sub_letter = input('Which letter would you like to replace: ')
+            hand = substitute_hand(hand, sub_letter)
+            score = play_hand(hand, word_list)
+
+
+        user_input = input('Would you like to replay the had? ')
+
+        if user_input[0] == 'n' or user_input[0] == 'N':
+            total_score += score
+            continue
+        else:
+            replay_score = play_hand(hand, word_list)
+            if replay_score > score:
+                total_score += replay_score
+            else:
+                total_score += score
+
+
+
     
 
 
@@ -397,5 +454,4 @@ def play_game(word_list):
 if __name__ == '__main__':
     word_list = load_words()
     play_game(word_list)
-    hand = deal_hand(6)
-    play_hand(hand, word_list)
+
